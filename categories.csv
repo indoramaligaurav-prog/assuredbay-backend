@@ -1,0 +1,156 @@
+category,sub_category,child_category
+Electronics,Mobiles,Smartphones
+Electronics,Mobiles,Feature Phones
+Electronics,Mobiles,Refurbished Phones
+Electronics,Mobiles,Mobile Accessories
+Electronics,Mobiles,Power Banks
+Electronics,Mobiles,Chargers
+Electronics,Mobiles,Cases & Covers
+Electronics,Computers,Laptops
+Electronics,Computers,Desktops
+Electronics,Computers,All in One PCs
+Electronics,Computers,Computer Components
+Electronics,Computers,Computer Accessories
+Electronics,Computers,Monitors
+Electronics,Computers,Keyboards
+Electronics,Computers,Mouse
+Electronics,Audio,Headphones
+Electronics,Audio,Earphones
+Electronics,Audio,Bluetooth Speakers
+Electronics,Audio,Soundbars
+Electronics,Audio,Home Audio Systems
+Electronics,Cameras,DSLR Cameras
+Electronics,Cameras,Mirrorless Cameras
+Electronics,Cameras,Action Cameras
+Electronics,Cameras,Camera Lenses
+Electronics,Cameras,Camera Accessories
+Electronics,TV & Video,Smart TVs
+Electronics,TV & Video,LED TVs
+Electronics,TV & Video,Streaming Devices
+Electronics,TV & Video,Projectors
+Electronics,TV & Video,Home Theatre Systems
+Electronics,Wearables,Smart Watches
+Electronics,Wearables,Fitness Bands
+Electronics,Wearables,VR Headsets
+Electronics,Gaming,Game Consoles
+Electronics,Gaming,Video Games
+Electronics,Gaming,Gaming Accessories
+Electronics,Gaming,Controllers
+
+Fashion,Men,T-Shirts
+Fashion,Men,Shirts
+Fashion,Men,Jeans
+Fashion,Men,Trousers
+Fashion,Men,Ethnic Wear
+Fashion,Men,Winter Wear
+Fashion,Men,Innerwear
+Fashion,Women,Dresses
+Fashion,Women,Tops
+Fashion,Women,Jeans
+Fashion,Women,Sarees
+Fashion,Women,Kurtis
+Fashion,Women,Winter Wear
+Fashion,Women,Lingerie
+Fashion,Kids,Boys Clothing
+Fashion,Kids,Girls Clothing
+Fashion,Kids,Baby Clothing
+Fashion,Footwear,Men Footwear
+Fashion,Footwear,Women Footwear
+Fashion,Footwear,Sports Shoes
+Fashion,Footwear,Sandals & Slippers
+Fashion,Accessories,Belts
+Fashion,Accessories,Wallets
+Fashion,Accessories,Handbags
+Fashion,Accessories,Sunglasses
+Fashion,Accessories,Watches
+
+Home & Living,Furniture,Sofas
+Home & Living,Furniture,Beds
+Home & Living,Furniture,Wardrobes
+Home & Living,Furniture,Dining Tables
+Home & Living,Furniture,Office Furniture
+Home & Living,Home Decor,Wall Art
+Home & Living,Home Decor,Clocks
+Home & Living,Home Decor,Lighting
+Home & Living,Home Decor,Curtains
+Home & Living,Kitchen Appliances,Mixer Grinders
+Home & Living,Kitchen Appliances,Microwave Ovens
+Home & Living,Kitchen Appliances,Air Fryers
+Home & Living,Kitchen Appliances,Refrigerators
+Home & Living,Kitchen Appliances,Washing Machines
+Home & Living,Home Storage,Storage Boxes
+Home & Living,Home Storage,Shoe Racks
+Home & Living,Home Storage,Kitchen Storage
+
+Motors,Cars,Used Cars
+Motors,Cars,New Cars
+Motors,Cars,Electric Cars
+Motors,Bikes,Motorcycles
+Motors,Bikes,Scooters
+Motors,Bikes,Electric Bikes
+Motors,Car Parts,Engine Parts
+Motors,Car Parts,Brake Parts
+Motors,Car Parts,Car Electronics
+Motors,Car Parts,Car Accessories
+Motors,Bike Parts,Helmets
+Motors,Bike Parts,Bike Accessories
+Motors,Bike Parts,Spare Parts
+
+Sports & Fitness,Fitness Equipment,Dumbbells
+Sports & Fitness,Fitness Equipment,Treadmills
+Sports & Fitness,Fitness Equipment,Exercise Bikes
+Sports & Fitness,Outdoor Sports,Cricket
+Sports & Fitness,Outdoor Sports,Football
+Sports & Fitness,Outdoor Sports,Badminton
+Sports & Fitness,Outdoor Sports,Tennis
+Sports & Fitness,Sportswear,Men Sportswear
+Sports & Fitness,Sportswear,Women Sportswear
+
+Beauty & Health,Makeup,Face Makeup
+Beauty & Health,Makeup,Eye Makeup
+Beauty & Health,Makeup,Lipsticks
+Beauty & Health,Skincare,Moisturizers
+Beauty & Health,Skincare,Face Wash
+Beauty & Health,Skincare,Sunscreen
+Beauty & Health,Hair Care,Shampoo
+Beauty & Health,Hair Care,Hair Oil
+Beauty & Health,Hair Care,Hair Styling Tools
+Beauty & Health,Health Care,Medical Equipment
+Beauty & Health,Health Care,Health Monitors
+Beauty & Health,Health Care,First Aid
+
+Books & Media,Books,Fiction
+Books & Media,Books,Non Fiction
+Books & Media,Books,Educational
+Books & Media,Books,Comics
+Toys & Games,Toys,Educational Toys
+Toys & Games,Toys,Soft Toys
+Toys & Games,Toys,Remote Control Toys
+Toys & Games,Games,Board Games
+Toys & Games,Games,Video Games
+Collectibles,Coins & Currency,Coins
+Collectibles,Coins & Currency,Paper Money
+Collectibles,Antiques,Home Antiques
+Collectibles,Antiques,Vintage Decor
+
+Business & Industrial,Industrial Tools,Power Tools
+Business & Industrial,Industrial Tools,Hand Tools
+Business & Industrial,Industrial Tools,Measuring Tools
+Business & Industrial,Office Equipment,Printers
+Business & Industrial,Office Equipment,Scanners
+Business & Industrial,Office Equipment,Projectors
+Business & Industrial,Commercial Supplies,Packaging Materials
+Business & Industrial,Commercial Supplies,Safety Equipment
+
+Real Estate,Residential,Flats
+Real Estate,Residential,Houses
+Real Estate,Residential,Villas
+Real Estate,Commercial,Office Space
+Real Estate,Commercial,Shops
+Real Estate,Commercial,Warehouses
+
+Services,Home Services,Plumbing
+Services,Home Services,Electrical
+Services,Home Services,Cleaning
+Services,Professional Services,IT Services
+Services,Professional Services,Consulting

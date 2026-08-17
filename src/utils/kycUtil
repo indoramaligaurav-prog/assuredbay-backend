@@ -1,0 +1,65 @@
+const Tesseract = require("tesseract.js");
+const path = require("path");
+
+// 🔹 Extract text from image
+const extractText = async (filePath) => {
+  try {
+    // normalize path (important for Windows + Linux)
+    const fullPath = path.resolve(filePath);
+
+    console.log("📂 OCR File:", fullPath);
+
+    const result = await Tesseract.recognize(fullPath, "eng", {
+      logger: (m) => {
+        if (m.status === "recognizing text") {
+          // optional: console.log("OCR progress:", m.progress);
+        }
+      }
+    });
+
+    const text = result?.data?.text || "";
+
+    console.log("📄 OCR Text (first 100 chars):", text.slice(0, 100));
+
+    return text;
+
+  } catch (error) {
+    console.log("❌ OCR Error:", error.message);
+    return "";
+  }
+};
+
+// 🔹 Clean extracted text (important)
+const cleanText = (text) => {
+  return text
+    .replace(/\s+/g, " ")     // remove extra spaces
+    .replace(/[^a-zA-Z0-9 ]/g, "") // remove special chars
+    .toUpperCase();
+};
+
+// 🔹 Basic name extraction (simple heuristic)
+const extractName = (text) => {
+  const words = text.split(" ");
+
+  const possibleName = words
+    .filter(w => /^[A-Z]{3,}$/.test(w))
+    .slice(0, 3)
+    .join(" ");
+
+  return possibleName || null;
+};
+
+const isFakeDocument = (text) => {
+  if (!text || text.length < 30) return true;
+  if (!/[0-9]/.test(text)) return true;
+  if (!/[A-Z]/.test(text)) return true;
+
+  return false;
+};
+
+module.exports = {
+  extractText,
+  cleanText,
+    extractName,
+  isFakeDocument
+};

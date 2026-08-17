@@ -1,0 +1,29 @@
+[
+  {
+    "name": "US Dollar",
+    "code": "USD",
+    "country": "United States",
+    "status": "active",
+    "rate": 1,
+    "base": true,
+    "rateType": "default"
+  },
+  {
+    "name": "Euro",
+    "code": "EUR",
+    "country": "European Union",
+    "status": "active",
+    "rate": 0.92,
+    "base": false,
+    "rateType": "default"
+  },
+  {
+    "name": "Pakistani Rupee",
+    "code": "PKR",
+    "country": "Pakistan",
+    "status": "active",
+    "rate": 278.5,
+    "base": false,
+    "rateType": "custom"
+  }
+]

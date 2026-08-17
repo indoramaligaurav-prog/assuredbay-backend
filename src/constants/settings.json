@@ -1,0 +1,124 @@
+{
+  "main": {
+    "businessName": "assuredbay",
+    "domainName": "www.assuredbay.com",
+    "websiteStatus": true,
+    "offlineMessage": "We are currently undergoing maintenance. Please check back soon.",
+    "seo": {
+      "metaTitle": "assuredbay - React Multivendor Ecommerce Script with Next js & MongoDB",
+      "metaDescription": "assuredbay is your all-in-one ecommerce solution with top products, fast delivery, and best prices.",
+      "description": "Welcome to assuredbay, a modern ecommerce platform offering a wide range of products from electronics to fashion, ensuring quality, convenience, and speed.",
+      "tags": ["assuredbay", "ecommerce", "shopping", "online store", "best deals"]
+    },
+
+    "gaId": "UA-assuredbay-1",
+    "gtmId": "GTM-assuredbay",
+    "shippingFee": 10,
+    "commission": 0
+  },
+  "home": {
+    "slides": [
+      {
+        "image": {
+          "_id": "slide1",
+          "url": "https://assuredbay-fe-staging.vercel.app/images/slide-1.png"
+        },
+        "link": "/products"
+      },
+      {
+        "image": {
+          "_id": "slide2",
+          "url": "https://assuredbay-fe-staging.vercel.app/images/slide-2.png"
+        },
+        "link": "/products"
+      }
+    ],
+    "banner1": {
+      "image": {
+        "_id": "banner1",
+        "url": "https://assuredbay-fe-staging.vercel.app/images/banner-1.png"
+      },
+      "link": "/products?category=shoes"
+    },
+    "banner2": {
+      "image": {
+        "_id": "banner2",
+        "url": "https://assuredbay-fe-staging.vercel.app/images/banner-2.png"
+      },
+      "link": "/products?category=watches"
+    }
+  },
+
+  "branding": {
+    "theme": {
+      "palette": {
+        "primary": "#0A52AE",
+        "secondary": "#CC2131",
+        "paperLight": "#FFFFFF",
+        "paperDark": "#212B36",
+        "defaultDark": "#161C24",
+        "defaultLight": "#F9FAFB"
+      },
+      "themeName": "default",
+      "fontFamily": "roboto"
+    },
+    "contact": {
+      "address": "assuredbay HQ, 123 Innovation Street, Tech City",
+      "addressOnMap": "https://maps.google.com/?q=assuredbay+HQ",
+      "lat": "37.7749",
+      "long": "-122.4194",
+      "email": "support@assuredbay.com",
+      "phone": "+1234567890",
+      "whatsappNo": "+1234567890"
+    },
+    "socialLinks": {
+      "facebook": "https://facebook.com/assuredbay",
+      "twitter": "https://twitter.com/assuredbay",
+      "linkedin": "https://linkedin.com/company/assuredbay",
+      "instagram": "https://instagram.com/assuredbay",
+      "whatsapp": "https://wa.me/1234567890"
+    },
+    "logoDark": {
+      "_id": "logo-dark",
+      "url": "https://assuredbay-fe-staging.vercel.app/logo-dark.svg"
+    },
+    "logoLight": {
+      "_id": "logo-light",
+      "url": "https://assuredbay-fe-staging.vercel.app/logo-light.svg"
+    },
+    "favicon": {
+      "_id": "favicon",
+      "url": "https://assuredbay-fe-staging.vercel.app/favicon.ico"
+    }
+  },
+  "general": {
+    "smtp": {
+      "isActive": false,
+      "host": "google.com",
+      "port": 465,
+      "user": "johndoe@gmail.com",
+      "password": "test1234",
+      "fromEmail": "johndoe@gmail.com",
+      "secure": false
+    },
+
+    "paypal": {
+      "isActive": false,
+      "mode": "sandbox",
+      "clientId": "PAYPAL-SANDBOX-CLIENT-ID-123456"
+    },
+    "stripe": {
+      "isActive": false,
+      "mode": "sandbox",
+      "publishableKey": "STRIPE-PUBLISHABLE-KEY-TEST-123456",
+      "secretKey": "STRIPE-SECRET-KEY-TEST-ABCDEF"
+    },
+
+    "cloudinary": {
+      "cloudName": "demo-cloud",
+      "apiKey": "123456789012345",
+      "apiSecret": "abcDEFghiJKLmnopQRS",
+      "preset": "assuredbay_uploads"
+    }
+  }
+}

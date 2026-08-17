@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Confirmation</title>
+</head>
+<body style="font-family: Arial, sans-serif; background:#f4f4f4; padding:20px;">
+  <table style="max-width:600px; margin:0 auto; background:#fff; border-radius:8px; overflow:hidden;">
+    <tr>
+      <td style="padding:24px;">
+        <h2>Thank you for your order, {{customerName}}!</h2>
+        <p>Your order <strong>{{orderNo}}</strong> has been placed successfully.</p>
+
+        <table width="100%" cellpadding="8" style="border-collapse:collapse; margin-top:16px;">
+          <thead>
+            <tr style="background:#f0f0f0;">
+              <th align="left">Item</th>
+              <th align="left">Qty</th>
+              <th align="left">Price</th>
+              <th align="left">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{itemsRows}}
+          </tbody>
+        </table>
+
+        <table width="100%" cellpadding="6" style="margin-top:16px;">
+          <tr><td>Subtotal</td><td align="right">{{subTotal}}</td></tr>
+          <tr><td>Discount</td><td align="right">-{{discount}}</td></tr>
+          <tr><td>Shipping</td><td align="right">{{shipping}}</td></tr>
+          <tr style="font-weight:bold; border-top:1px solid #ddd;">
+            <td>Total</td><td align="right">{{total}}</td>
+          </tr>
+        </table>
+
+        <p style="margin-top:24px; color:#777; font-size:13px;">
+          If you have any questions about your order, just reply to this email.
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
