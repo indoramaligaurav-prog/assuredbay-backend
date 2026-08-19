@@ -1,7 +1,7 @@
 const supportService = require("../../services/support.service");
 const { getIssueEligibility } = require("../../services/issue-eligibility.service");
 const SupportTicket = require("../../models/SupportTicket");
-// NOTE: assuming getAdmin-middleware attaches the logged-in admin doc to req.user.
+// NOTE: assuming getAdmin-middleware attaches the logged-in admin doc to req.admin.
 
 exports.getAllTicketsByAdmin = async (req, res) => {
   try {
@@ -14,7 +14,7 @@ exports.getAllTicketsByAdmin = async (req, res) => {
 
 exports.getTicketByAdmin = async (req, res) => {
   try {
-    const { ticket, messages } = await supportService.getTicketById({ id: req.params.id, requester: req.user });
+    const { ticket, messages } = await supportService.getTicketById({ id: req.params.id, requester: req.admin });
     return res.json({ success: true, ticket, messages });
   } catch (err) {
     return res.status(err.status || 500).json({ success: false, message: err.message || "Could not fetch ticket" });
@@ -23,7 +23,7 @@ exports.getTicketByAdmin = async (req, res) => {
 
 exports.replyToTicketByAdmin = async (req, res) => {
   try {
-    const ticket = await supportService.replyToTicket({ id: req.params.id, requester: req.user, body: req.body });
+    const ticket = await supportService.replyToTicket({ id: req.params.id, requester: req.admin, body: req.body });
     return res.status(201).json({ success: true, ticket });
   } catch (err) {
     return res.status(err.status || 500).json({ success: false, message: err.message || "Could not post reply" });
@@ -58,7 +58,7 @@ exports.decideTicketByAdmin = async (req, res) => {
   try {
     const ticket = await supportService.decideTicket({
       id: req.params.id,
-      admin: req.user,
+      admin: req.admin,
       decision: req.body.decision,
       note: req.body.note
     });
