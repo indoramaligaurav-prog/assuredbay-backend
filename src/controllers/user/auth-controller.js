@@ -199,9 +199,11 @@ const signIn = async (req, res) => {
       },
     ]);
 
-    const zone =  user.zone ? await Userzone.findOne({ user_id: user._id }) : null;
+      
 
-    console.log("User Zone:", zone); // 
+    const zone = user?._id ? await Userzone.findOne({ user_id: user._id }) : null;
+
+    console.log("User Zone:", zone , user._id); // 
 
     return res.status(201).json({
       success: true,

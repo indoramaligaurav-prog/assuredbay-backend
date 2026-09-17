@@ -193,7 +193,7 @@ const createOrder = async (req, res) => {
       shippingService:  item.shippingService,
       shippingCurrency: item.shippingCurrency,
       isQuoted:         item.isQuoted,
-      vendorStatus:     'pending'
+      vendorStatus:     'approved'
     }));
  
     await OrderItem.insertMany(orderItemDocs);

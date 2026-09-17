@@ -1,4 +1,5 @@
 const { ISSUE_TAXONOMY } = require("../constants/issue-taxonomy");
+const ProductConditionMaster = require("../models/ProductConditionMaster");
 
 // Adjust these model names if yours differ (checked against your DB dump —
 // collections were `products`, `orders`, `orderitems`, `users`, so the
@@ -56,7 +57,20 @@ async function getIssueEligibility({ orderItemId, buyerId }) {
 
   const returnPolicy = isInternational ? product?.internationalReturns : product?.domesticReturns;
 
-  const reasons = ISSUE_TAXONOMY.map((reason) => {
+  // Product.condition is a required editorial field, so no "show everything"
+  // fallback is needed here — if it's ever missing on a legacy/bad row, we
+  // deliberately show nothing rather than exposing condition-inappropriate
+  // reasons (see [].includes(null) === false below, for every entry).
+  const productCondition = product?.condition ? product.condition.toUpperCase() : null;
+  const conditionMaster = productCondition
+    ? await ProductConditionMaster.findOne({ code: productCondition, active: true }).lean()
+    : null;
+
+    console.log('DEBUG productCondition:', JSON.stringify(productCondition));
+console.log('DEBUG first reason conditions:', JSON.stringify(ISSUE_TAXONOMY[0].conditions));
+console.log('DEBUG match?', ISSUE_TAXONOMY[0].conditions.includes(productCondition));
+
+  const reasons = ISSUE_TAXONOMY.filter((reason) => reason.conditions.includes(productCondition)).map((reason) => {
     const base = {
       code: reason.code,
       label: reason.label,
@@ -91,6 +105,7 @@ async function getIssueEligibility({ orderItemId, buyerId }) {
       imageUrl: orderItem.imageUrl
     },
     order: { _id: order._id, orderNo: order.orderNo, createdAt: order.createdAt },
+    productCondition: conditionMaster ? { code: conditionMaster.code, name: conditionMaster.name } : null,
     daysSinceOrder: daysSince,
     withinAdvisoryWindow,
     advisoryWindowDays: REPORT_WINDOW_DAYS,

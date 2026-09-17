@@ -1,6 +1,10 @@
 const SupportTicket = require("../models/SupportTicket");
 const SupportMessage = require("../models/SupportMessage");
 const { ISSUE_TAXONOMY_MAP } = require("../constants/issue-taxonomy");
+const Product = require("../models/Product");
+const { checkMessage } = require("../utils/contact-filter");
+
+const VENDOR_RESPONSE_WINDOW_HOURS = 48;
 
 const isStaff = (role) => role === "admin" || role === "super-admin";
 
@@ -62,9 +66,27 @@ async function createTicket({ requester, raiserRole, body, evidenceFiles = [] })
     }
   }
 
+    // Vendor-first routing — only for order_issue tickets tied to a real
+  // product with a resolvable vendor. General/account/payment queries are
+  // unaffected and go straight to admin as before.
+  let vendorId = null;
+  let currentHandler = "admin";
+  let vendorRespondDeadline = null;
+  let initialStatus = "open";
+
+  if (category === "order_issue" && relatedProduct) {
+    const product = await Product.findById(relatedProduct).select("vendor");
+    if (product?.vendor) {
+      vendorId = product.vendor;
+      currentHandler = "vendor";
+      vendorRespondDeadline = new Date(Date.now() + VENDOR_RESPONSE_WINDOW_HOURS * 60 * 60 * 1000);
+      initialStatus = "awaiting_vendor_response";
+    }
+  }
+
   const ticketNo = await generateUniqueTicketNo();
 
-  const ticket = await SupportTicket.create({
+    const ticket = await SupportTicket.create({
     ticketNo,
     raisedBy: {
       user: requester._id,
@@ -78,13 +100,18 @@ async function createTicket({ requester, raiserRole, body, evidenceFiles = [] })
     subReason: subReason || null,
     evidence: evidenceFiles.map((f) => ({ url: f.url, mimeType: f.mimeType, capturedLive: true })),
     priority: priority || "medium",
+    status: initialStatus,
+    currentHandler,
+    vendor: vendorId,
+    vendorRespondDeadline,
     relatedOrder: relatedOrder || null,
     relatedOrderItem: relatedOrderItem || null,
     relatedProduct: relatedProduct || null,
     relatedShop: relatedShop || null,
     lastMessagePreview: message.slice(0, 140),
     lastMessageByRole: raiserRole,
-    unreadByAdmin: true
+    unreadByAdmin: currentHandler === "admin",
+    unreadByVendor: currentHandler === "vendor"
   });
 
   await SupportMessage.create({
@@ -114,7 +141,8 @@ async function getTicketById({ id, requester }) {
 
   const staff = isStaff(requester.role);
   const owner = ticket.raisedBy.user.toString() === requester._id.toString();
-  if (!staff && !owner) {
+  const isAssignedVendor = ticket.vendor && ticket.vendor.toString() === requester._id.toString();
+  if (!staff && !owner && !isAssignedVendor) {
     const err = new Error("Not authorized");
     err.status = 403;
     throw err;
@@ -154,13 +182,30 @@ async function replyToTicket({ id, requester, body }) {
     throw err;
   }
 
+  
+
   if (ticket.status === "closed") {
     const err = new Error("This ticket is closed. Raise a new ticket instead.");
     err.status = 400;
     throw err;
   }
 
-  const senderRole = staff ? "admin" : ticket.raisedBy.role;
+  const senderRole = staff ? "admin" : (requester._id?.toString() === ticket.vendor?.toString() ? "vendor" : ticket.raisedBy.role);
+
+  // Contact-info filtering applies to vendor/customer messages only —
+  // admins are exempt since they may legitimately need to reference
+  // official support channels.
+  let filterResult = { blocked: false, flagged: false, reason: null };
+  if (!staff) {
+    filterResult = checkMessage(message);
+    if (filterResult.blocked) {
+      const err = new Error(
+        "Contact details or off-platform links can't be shared here — please keep all communication on Assuredbay so both sides stay protected."
+      );
+      err.status = 400;
+      throw err;
+    }
+  }
   const senderName = staff ? `${requester.firstName} ${requester.lastName}`.trim() : ticket.raisedBy.name;
   const note = staff && isInternalNote === true;
 
@@ -170,7 +215,9 @@ async function replyToTicket({ id, requester, body }) {
     sender: { _id: requester._id, role: senderRole, name: senderName },
     message,
     attachments: attachments || [],
-    isInternalNote: note
+    isInternalNote: note,
+    flaggedForReview: filterResult.flagged,
+    flagReason: filterResult.reason
   });
 
   if (!note) {
@@ -317,6 +364,152 @@ async function decideTicket({ id, admin, decision, note }) {
   return ticket;
 }
 
+/**
+ * Vendor records a decision on a ticket currently in their court. Moves
+ * the ball to the customer — does NOT resolve the ticket itself.
+ */
+async function vendorDecide({ id, vendor, decision, note }) {
+  const valid = ["return_refund", "refund_only", "replacement", "repair", "declined"];
+  if (!valid.includes(decision)) {
+    const err = new Error("Invalid decision");
+    err.status = 400;
+    throw err;
+  }
+
+  const ticket = await SupportTicket.findById(id);
+  if (!ticket) {
+    const err = new Error("Ticket not found");
+    err.status = 404;
+    throw err;
+  }
+  if (!ticket.vendor || ticket.vendor.toString() !== vendor._id.toString()) {
+    const err = new Error("Not authorized");
+    err.status = 403;
+    throw err;
+  }
+  if (ticket.currentHandler !== "vendor") {
+    const err = new Error("This ticket is not currently awaiting a vendor response");
+    err.status = 400;
+    throw err;
+  }
+
+  ticket.vendorDecision = { decision, note: note || null, decidedAt: new Date() };
+  ticket.currentHandler = "customer";
+  ticket.status = "awaiting_customer_decision";
+  ticket.vendorRespondDeadline = null;
+  ticket.unreadByRaiser = true;
+  await ticket.save();
+
+  const DECISION_LABELS = {
+    return_refund: "offered a return & refund",
+    refund_only: "offered a refund (no return required)",
+    replacement: "offered a replacement",
+    repair: "offered a repair",
+    declined: "declined the claim"
+  };
+
+  await SupportMessage.create({
+    ticketId: ticket._id,
+    ticketNo: ticket.ticketNo,
+    sender: { _id: vendor._id, role: "vendor", name: `${vendor.firstName} ${vendor.lastName}`.trim() },
+    message: `Vendor ${DECISION_LABELS[decision]}.${note ? " " + note : ""}`
+  });
+
+  return ticket;
+}
+
+/**
+ * Customer responds to the vendor's decision — either accepts (closes the
+ * ticket) or rejects (escalates to admin). No timeout auto-accepts;
+ * silence just leaves the ticket sitting in awaiting_customer_decision.
+ */
+async function customerRespond({ id, customer, accepted, note }) {
+  const ticket = await SupportTicket.findById(id);
+  if (!ticket) {
+    const err = new Error("Ticket not found");
+    err.status = 404;
+    throw err;
+  }
+  if (ticket.raisedBy.user.toString() !== customer._id.toString()) {
+    const err = new Error("Not authorized");
+    err.status = 403;
+    throw err;
+  }
+  if (ticket.currentHandler !== "customer") {
+    const err = new Error("This ticket is not currently awaiting your decision");
+    err.status = 400;
+    throw err;
+  }
+
+  ticket.customerFeedback = { accepted: Boolean(accepted), note: note || null, respondedAt: new Date() };
+
+  if (accepted) {
+    ticket.resolution = {
+      decision: ticket.vendorDecision.decision,
+      note: ticket.vendorDecision.note,
+      decidedBy: ticket.vendor,
+      decidedAt: ticket.vendorDecision.decidedAt,
+      policyAligned: null
+    };
+    ticket.status = "resolved";
+    ticket.currentHandler = "vendor"; // resolved, but keep last-handler context; UI reads `status` for closed state
+    ticket.resolvedAt = new Date();
+  } else {
+    ticket.currentHandler = "admin";
+    ticket.status = "escalated";
+    ticket.escalation = { escalated: true, reason: "customer_rejected", escalatedAt: new Date() };
+    ticket.unreadByAdmin = true;
+  }
+  await ticket.save();
+
+  await SupportMessage.create({
+    ticketId: ticket._id,
+    ticketNo: ticket.ticketNo,
+    sender: { _id: customer._id, role: ticket.raisedBy.role, name: ticket.raisedBy.name },
+    message: accepted
+      ? `Customer accepted the vendor's decision.${note ? " " + note : ""}`
+      : `Customer was not satisfied with the vendor's decision — escalated to Assuredbay support.${note ? " " + note : ""}`
+  });
+
+  return ticket;
+}
+
+/**
+ * Called by the cron job — sweeps vendor-held tickets past their 48h
+ * deadline and escalates them to admin.
+ */
+async function escalateOverdueVendorTickets() {
+  const overdue = await SupportTicket.find({
+    currentHandler: "vendor",
+    status: "awaiting_vendor_response",
+    vendorRespondDeadline: { $lte: new Date() }
+  });
+
+  for (const ticket of overdue) {
+    ticket.currentHandler = "admin";
+    ticket.status = "escalated";
+    ticket.escalation = { escalated: true, reason: "vendor_timeout", escalatedAt: new Date() };
+    ticket.unreadByAdmin = true;
+    await ticket.save();
+
+    await SupportMessage.create({
+      ticketId: ticket._id,
+      ticketNo: ticket.ticketNo,
+      sender: { _id: ticket.vendor, role: "vendor", name: "System" },
+      message: "Vendor did not respond within 48 hours — this ticket has been escalated to Assuredbay support."
+    });
+  }
+
+  return overdue.length;
+}
+
+async function getTicketsForVendor({ vendorId, status, currentHandler }) {
+  const filter = { vendor: vendorId };
+  if (status) filter.status = status;
+  if (currentHandler) filter.currentHandler = currentHandler;
+  return SupportTicket.find(filter).sort({ lastMessageAt: -1 });
+}
+
 module.exports = {
   createTicket,
   getMyTickets,
@@ -325,5 +518,9 @@ module.exports = {
   getAllTickets,
   updateStatus,
   assignTicket,
-  decideTicket
+  decideTicket,
+  vendorDecide,
+  customerRespond,
+  escalateOverdueVendorTickets,
+  getTicketsForVendor
 };

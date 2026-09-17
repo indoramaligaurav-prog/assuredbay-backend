@@ -27,6 +27,8 @@ const supportMessageSchema = new Schema(
 
     // Admin-only note, hidden from the customer/vendor thread view
     isInternalNote: { type: Boolean, default: false },
+    flaggedForReview: { type: Boolean, default: false },
+    flagReason: { type: String, default: null }
   },
   { timestamps: true }
 );

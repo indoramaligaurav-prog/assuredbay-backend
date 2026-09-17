@@ -19,7 +19,7 @@ const ProductSchema = new mongoose.Schema(
     // ── Item Specifics ──
     condition: {
   type: String,
-  enum: ["new", "used", "reconditioned", "as_is"],
+  enum: ["NEW", "REFURBISHED", "RECONDITIONED","OVERHAULED","AS_IS" , "USED"], 
 },
     itemsInSet:  { type: Number, default: 1 },
     stock:       { type: Number, required: true },

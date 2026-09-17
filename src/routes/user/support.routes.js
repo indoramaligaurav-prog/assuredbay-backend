@@ -26,4 +26,6 @@ router.get(
   support.getIssueEligibilityByUser
 );
 
+router.patch("/support/tickets/:id/respond", verifyToken, getUser, support.respondToVendorDecisionByUser);
+
 module.exports = router;

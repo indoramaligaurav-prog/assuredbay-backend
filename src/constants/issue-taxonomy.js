@@ -4,6 +4,8 @@
  * backend can enforce a minimum number of live-captured photos.
  */
 
+const ALL_CONDITIONS = ['NEW', 'REFURBISHED', 'RECONDITIONED', 'OVERHAULED', 'USED', 'AS_IS'];
+
 const ISSUE_TAXONOMY = [
   {
     code: 'wrong_item',
@@ -11,6 +13,7 @@ const ISSUE_TAXONOMY = [
     description: 'The item delivered is a different product, model, part, size, or variant than what you ordered.',
     policyRelevant: true,
     minEvidenceCount: 2,
+    conditions: ALL_CONDITIONS,
     subreasons: [
       { code: 'different_product', label: 'Different product delivered' },
       { code: 'different_model', label: 'Different manufacturer or model delivered' },
@@ -24,6 +27,7 @@ const ISSUE_TAXONOMY = [
     description: "The delivered item's physical state materially differs from the listing images or description.",
     policyRelevant: true,
     minEvidenceCount: 2,
+    conditions: ALL_CONDITIONS.filter((c) => c !== 'AS_IS'),
     subreasons: [
       { code: 'undisclosed_damage', label: 'Noticeable undisclosed physical damage' },
       { code: 'cracked_broken', label: 'Cracked or broken' },
@@ -36,8 +40,9 @@ const ISSUE_TAXONOMY = [
     code: 'missing_parts',
     label: 'Parts, quantity, or listed contents are missing',
     description: 'Something explicitly shown or stated as included was not delivered.',
-    policyRelevant: false,
+     policyRelevant: false,
     minEvidenceCount: 2,
+    conditions: ALL_CONDITIONS,
     subreasons: [
       { code: 'partial_quantity', label: 'Part of the ordered quantity is missing' },
       { code: 'essential_component', label: 'An essential component is missing' },
@@ -52,6 +57,7 @@ const ISSUE_TAXONOMY = [
     description: 'The listing represented the item as working/tested/functional, but it materially fails that representation.',
     policyRelevant: true,
     minEvidenceCount: 2,
+    conditions: ALL_CONDITIONS.filter((c) => c !== 'AS_IS'),
     subreasons: [
       { code: 'wont_power_on', label: 'Will not power on or start' },
       { code: 'function_fails', label: 'Advertised function does not operate' },
@@ -67,6 +73,7 @@ const ISSUE_TAXONOMY = [
     description: 'The product appears to have been damaged while packed, handled, or transported.',
     policyRelevant: false,
     minEvidenceCount: 3, // packaging shot + item shot(s), per spec guidance for transit damage
+    conditions: ALL_CONDITIONS,
     subreasons: [
       { code: 'both_damaged', label: 'Outer packaging and item both damaged' },
       { code: 'item_damaged_only', label: 'Item damaged with no obvious outer-package damage' },
@@ -81,6 +88,7 @@ const ISSUE_TAXONOMY = [
     policyRelevant: false,
     noEvidenceRequired: true,
     minEvidenceCount: 0,
+    conditions: ALL_CONDITIONS,
     subreasons: [
       { code: 'shows_delivered_not_received', label: 'Tracking says delivered, but the shipment was not received' },
       { code: 'stalled_tracking', label: 'Tracking has not progressed beyond the delivery deadline' },
@@ -94,6 +102,7 @@ const ISSUE_TAXONOMY = [
     description: 'Serious concerns that require specialist review.',
     policyRelevant: false,
     minEvidenceCount: 2,
+    conditions: ALL_CONDITIONS,
     subreasons: [
       { code: 'suspected_counterfeit', label: 'Suspected counterfeit or altered identity' },
       { code: 'altered_serial', label: 'Serial number, data plate, mark, or label appears altered' },
@@ -107,4 +116,4 @@ const ISSUE_TAXONOMY_MAP = ISSUE_TAXONOMY.reduce((acc, t) => {
   return acc;
 }, {});
 
-module.exports = { ISSUE_TAXONOMY, ISSUE_TAXONOMY_MAP };
+module.exports = { ISSUE_TAXONOMY, ISSUE_TAXONOMY_MAP, ALL_CONDITIONS };

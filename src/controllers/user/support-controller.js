@@ -13,8 +13,9 @@ exports.createTicketByUser = async (req, res) => {
       originalname: f.originalname
     }));
 
+
     const ticket = await supportService.createTicket({
-      requester: req.user,
+      requester: req.userData,
       raiserRole: "user",
       body: req.body,
       evidenceFiles
@@ -58,5 +59,19 @@ exports.getIssueEligibilityByUser = async (req, res) => {
     return res.json({ success: true, ...result });
   } catch (err) {
     return res.status(err.status || 500).json({ success: false, message: err.message || "Could not load issue options" });
+  }
+};
+
+exports.respondToVendorDecisionByUser = async (req, res) => {
+  try {
+    const ticket = await supportService.customerRespond({
+      id: req.params.id,
+      customer: req.userData,
+      accepted: req.body.accepted,
+      note: req.body.note
+    });
+    return res.json({ success: true, ticket });
+  } catch (err) {
+    return res.status(err.status || 500).json({ success: false, message: err.message || "Could not submit your response" });
   }
 };
