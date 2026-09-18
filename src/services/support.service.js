@@ -176,7 +176,8 @@ async function replyToTicket({ id, requester, body }) {
 
   const staff = isStaff(requester.role);
   const owner = ticket.raisedBy.user.toString() === requester._id.toString();
-  if (!staff && !owner) {
+  const isAssignedVendor = ticket.vendor && ticket.vendor.toString() === requester._id.toString();
+  if (!staff && !owner && !isAssignedVendor) {
     const err = new Error("Not authorized");
     err.status = 403;
     throw err;
