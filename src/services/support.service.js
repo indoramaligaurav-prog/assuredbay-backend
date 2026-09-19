@@ -201,7 +201,7 @@ async function replyToTicket({ id, requester, body }) {
     filterResult = checkMessage(message);
     if (filterResult.blocked) {
       const err = new Error(
-        "Contact details or off-platform links can't be shared here — please keep all communication on Assuredbay so both sides stay protected."
+        "Contact details or off-platform links can't be shared here — please keep all communication on Wreeo so both sides stay protected."
       );
       err.status = 400;
       throw err;

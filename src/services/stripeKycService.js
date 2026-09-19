@@ -12,7 +12,7 @@ const createVerificationSession = async (userId) => {
       metadata: {
         userId: userId.toString(),
       },
-        return_url: "https://assuredbay.com/kyc-result",
+        return_url: "https://www.wreeo.com/kyc-result",
     });
 
     return session;

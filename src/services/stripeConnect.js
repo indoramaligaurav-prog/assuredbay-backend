@@ -29,8 +29,8 @@ const createOnboardingLink = async (accountId) => {
   try {
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
-      refresh_url: "https://assuredbay.com/vendor/onboarding/refresh",
-      return_url: "https://assuredbay.com/kyc-result",
+      refresh_url: "https://www.wreeo.com/vendor/onboarding/refresh",
+      return_url: "https://www.wreeo.com/kyc-result",
       type: "account_onboarding",
     });
 

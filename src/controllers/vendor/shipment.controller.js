@@ -5,6 +5,7 @@ const User = require('../../models/User');
 const { createShipment, schedulePickup } = require('../../services/fedex.service');
 const path = require('path');
 const fs   = require('fs');
+const Country = require('../../models/Countries');
 
 const FALLBACK_SHIPPER_PHONE = '9999999999'; // TODO: replace with real business support number
 
@@ -16,8 +17,18 @@ const COUNTRY_CODE_MAP = {
   'United States': 'US',
   'USA': 'US',
 };
-function getCountryCode(countryName) {
-  return COUNTRY_CODE_MAP[countryName] || countryName?.slice(0, 2)?.toUpperCase() || 'IN';
+
+async function getCountryCode(countryName) {
+  if (!countryName) return 'IN';
+
+  const country = await Country.findOne({
+    $or: [
+      { code: countryName.trim().toUpperCase() },
+      { label: countryName.trim() }
+    ]
+  }).lean();
+
+  return country?.code || 'IN';
 }
 
 // ── POST /api/shipments/create ──
@@ -49,6 +60,8 @@ const createShipmentHandler = async (req, res) => {
 
     const loc = product.itemLocation || {};
 
+    console.log('locatiopn check' , loc);
+
     if (!loc.streetAddress || !loc.city || !loc.country || !loc.state) {
       return res.status(400).json({
         success: false,
@@ -63,7 +76,7 @@ const createShipmentHandler = async (req, res) => {
       city:        loc.city,
       state:       loc.state,
       zipcode:     loc.zipcode || '',
-      countryCode: getCountryCode(loc.country),
+      countryCode: await getCountryCode(loc.country),
     };
 
     // ── Recipient — internal only, NEVER sent to vendor ──
@@ -77,7 +90,9 @@ const createShipmentHandler = async (req, res) => {
       city:        shipTo?.city || order.user?.city || '',
       state:       shipTo?.state || order.user?.state || '',
       zip:         shipTo?.zip || order.user?.zip || '',
-      countryCode: getCountryCode(shipTo?.country || order.user?.country),
+      countryCode: await getCountryCode(
+        shipTo?.country || order.user?.country
+      ),
     };
 
     const parcel = {
@@ -91,7 +106,7 @@ const createShipmentHandler = async (req, res) => {
       name:                 product.title,
       description:          product.title,
       harmonizedCode:       product.additionalDetails?.hscode || '',
-      countryOfManufacture: getCountryCode(product.additionalDetails?.countryOfManufacture || loc.country),
+      countryOfManufacture: await getCountryCode(product.additionalDetails?.countryOfManufacture || loc.country),
       quantity:             item.quantity || 1,
       weightKg:             product.additionalDetails?.packageWeight || 0.5,
       customsValueUsd:      item.unitPrice || 0, // fixed-currency customs value, per business decision — see note in fedex.service.js
