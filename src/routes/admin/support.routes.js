@@ -57,6 +57,9 @@ router.get(
   checkPermission("support.view"),
   support.getIssueEligibilityByAdmin
 );
+
+router.get("/admin/support/tickets/:id/call-request",   verifyToken,
+  getAdmin, support.getCallRequestByAdmin);
  
 
 module.exports = router;

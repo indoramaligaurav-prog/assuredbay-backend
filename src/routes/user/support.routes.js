@@ -28,4 +28,6 @@ router.get(
 
 router.patch("/support/tickets/:id/respond", verifyToken, getUser, support.respondToVendorDecisionByUser);
 
+router.get("/support/tickets/by-item/:orderItemId",verifyToken, getUser, support.getOpenTicketForItemByUser);
+
 module.exports = router;

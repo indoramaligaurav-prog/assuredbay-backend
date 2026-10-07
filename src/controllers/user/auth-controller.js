@@ -34,18 +34,32 @@ const signUp = async (req, res) => {
       digits: true,
     });
 
-   const username = await generateUsername({
-      firstName: request.firstName,
-      lastName: request.lastName,
-      type: "user",
-    });
-  
-    const user = await User.create({
-      ...request,
-        username,
-      otp,
-      role: UserCount ? request.role || "user" : "super-admin",
-    });
+   const { accountType = "personal", companyName, businessCountry } = request;
+const isBusiness = accountType === "business";
+
+if (isBusiness && (!companyName || !businessCountry)) {
+  return res.status(400).json({
+    success: false,
+    message: "Business name and country are required",
+  });
+}
+
+const firstName = isBusiness ? companyName : request.firstName;
+const lastName = isBusiness ? "" : request.lastName;
+
+const username = await generateUsername({ firstName, lastName, type: "user" });
+
+const user = await User.create({
+  firstName,
+  lastName,
+  username,
+  email: request.email,
+  password: request.password,
+  otp,
+  accountType,
+  ...(isBusiness && { companyName, businessCountry }),
+  role: UserCount ? "user" : "super-admin",
+});
 
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -211,6 +225,7 @@ const signIn = async (req, res) => {
       token,
       user: {
         _id: user._id,
+        accountType: user.accountType,
         firstName: user.firstName,
         lastName: user.lastName,
         username: user.username,

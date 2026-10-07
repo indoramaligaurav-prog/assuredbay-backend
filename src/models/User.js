@@ -9,7 +9,10 @@ const UserSchema = new mongoose.Schema(
     },
     lastName: {
       type: String,
-      required: [true, "Please enter a lastName"],
+      required: [
+        function () { return this.accountType !== "business"; },
+        "Please enter a lastName",
+      ],
     },
     username: {
       type: String,
@@ -89,6 +92,9 @@ const UserSchema = new mongoose.Schema(
     about: {
       type: String,
     },
+    accountType: { type: String, enum: ["personal", "business"], default: "personal" },
+companyName: { type: String, trim: true },
+businessCountry: { type: String },
     isVerified: {
       type: Boolean,
       default: false,
@@ -117,6 +123,10 @@ google_id: {
         return this.role === "vendor";
       },
     },
+
+    profileGrade: { type: mongoose.Schema.Types.ObjectId, ref: "ProfileGrade", default: null, index: true },
+    gradeUpdatedAt: { type: Date, default: null },
+    proSubscriptionUntil: { type: Date, default: null },
 
     commission: {
       type: Number,

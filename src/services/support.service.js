@@ -469,7 +469,7 @@ async function customerRespond({ id, customer, accepted, note }) {
     sender: { _id: customer._id, role: ticket.raisedBy.role, name: ticket.raisedBy.name },
     message: accepted
       ? `Customer accepted the vendor's decision.${note ? " " + note : ""}`
-      : `Customer was not satisfied with the vendor's decision — escalated to Assuredbay support.${note ? " " + note : ""}`
+      : `Customer was not satisfied with the vendor's decision — escalated to Wreeo support.${note ? " " + note : ""}`
   });
 
   return ticket;
@@ -497,7 +497,7 @@ async function escalateOverdueVendorTickets() {
       ticketId: ticket._id,
       ticketNo: ticket.ticketNo,
       sender: { _id: ticket.vendor, role: "vendor", name: "System" },
-      message: "Vendor did not respond within 48 hours — this ticket has been escalated to Assuredbay support."
+      message: "Vendor did not respond within 48 hours — this ticket has been escalated to Wreeo support."
     });
   }
 

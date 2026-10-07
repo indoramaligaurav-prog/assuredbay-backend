@@ -54,6 +54,7 @@ const vendorOrderRoutes = require("./vendor/order-routes");
 const CourierRoutes = require("./vendor/courier-routes");
 const vendorShipmentRoutes  = require("./vendor/shipment.routes"); // ← new
 const vendorSupportRoutes = require("./vendor/support.routes");
+const vendorTierRoutes = require("./vendor/tier-routes");
 const router = express.Router();
 
 //////////////// admin routes //////////////////////
@@ -112,5 +113,6 @@ router.use("/api", vendorOrderRoutes);
 router.use("/api", vendorShipmentRoutes); // ← new
 router.use("/api", CourierRoutes);
 router.use("/api", vendorSupportRoutes);
+router.use("/api", vendorTierRoutes);
 
 module.exports = router;

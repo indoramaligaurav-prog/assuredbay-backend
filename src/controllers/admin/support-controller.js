@@ -1,6 +1,8 @@
 const supportService = require("../../services/support.service");
 const { getIssueEligibility } = require("../../services/issue-eligibility.service");
 const SupportTicket = require("../../models/SupportTicket");
+const { attachTicketContext } = require("../../utils/ticket-context");
+const CallRequest = require("../../models/CallRequest");
 // NOTE: assuming getAdmin-middleware attaches the logged-in admin doc to req.admin.
 
 exports.getAllTicketsByAdmin = async (req, res) => {
@@ -15,7 +17,7 @@ exports.getAllTicketsByAdmin = async (req, res) => {
 exports.getTicketByAdmin = async (req, res) => {
   try {
     const { ticket, messages } = await supportService.getTicketById({ id: req.params.id, requester: req.admin });
-    return res.json({ success: true, ticket, messages });
+    return res.json({ success: true, ticket: await attachTicketContext(ticket), messages });
   } catch (err) {
     return res.status(err.status || 500).json({ success: false, message: err.message || "Could not fetch ticket" });
   }
@@ -83,5 +85,14 @@ exports.getIssueEligibilityByAdmin = async (req, res) => {
     return res.json({ success: true, ...result });
   } catch (err) {
     return res.status(err.status || 500).json({ success: false, message: err.message || "Could not load policy context" });
+  }
+};
+
+exports.getCallRequestByAdmin = async (req, res) => {
+  try {
+    const callRequest = await CallRequest.findOne({ ticket: req.params.id }).select("-vendorPhone").sort({ createdAt: -1 });
+    return res.json({ success: true, callRequest: callRequest || null });
+  } catch (err) {
+    return res.status(err.status || 500).json({ success: false, message: err.message });
   }
 };

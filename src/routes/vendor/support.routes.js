@@ -15,4 +15,7 @@ router.post("/vendor/support/tickets/:id/messages", verifyToken, getVendor, supp
 router.patch("/vendor/support/tickets/:id/decision", verifyToken, getVendor, support.decideTicketByVendor);
 router.get("/vendor/support/tickets/:id/issue-context", verifyToken, getVendor, support.getIssueContextByVendor);
 
+router.post("/vendor/support/tickets/:id/call-request", verifyToken, getVendor, support.createCallRequestByVendor);
+router.get("/vendor/support/tickets/:id/call-request", verifyToken, getVendor, support.getCallRequestByVendor);
+
 module.exports = router;
