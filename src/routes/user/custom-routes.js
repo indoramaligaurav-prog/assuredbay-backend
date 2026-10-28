@@ -42,6 +42,9 @@ router.post(
     try {
       const { categoryId, parentCategory } = req.body;
 
+      console.log('BODY:', req.body);
+console.log('FILE:', req.file);
+
       if (!req.file || !categoryId) {
         return res.status(400).json({ message: 'Invalid upload request' });
       }
