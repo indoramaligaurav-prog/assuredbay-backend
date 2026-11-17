@@ -1,4 +1,10 @@
 "use strict";
+
+const dns = require("node:dns");
+
+// Fix MongoDB Atlas SRV DNS resolution
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
 require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");

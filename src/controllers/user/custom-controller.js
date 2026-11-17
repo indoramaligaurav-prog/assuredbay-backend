@@ -366,6 +366,8 @@ exports.getallpoliciesforlisting = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     const data = JSON.parse(req.body.data);
+
+    console.log(data);
  
     // ── Product-level images ──
     const productImages = (req.files || [])
